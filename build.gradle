@@ -1,13 +1,13 @@
 buildscript {
-    ext.kotlinVersion = '1.5.10'
+    ext.kotlinVersion = '1.5.21'
     ext.navigationVersion = '2.3.5'
     ext.ktlintVersion = '0.33.0'
     repositories {
         google()
-        jcenter()
+        mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.2.1'
+        classpath 'com.android.tools.build:gradle:7.0.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$navigationVersion"
 
@@ -23,7 +23,7 @@ plugins {
 allprojects {
     repositories {
         google()
-        jcenter()
+        mavenCentral()
     }
     apply plugin: 'com.diffplug.spotless'
     spotless {
