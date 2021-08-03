@@ -22,6 +22,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asFlow
 import androidx.lifecycle.distinctUntilChanged
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
@@ -35,6 +36,9 @@ import com.example.android.architecture.blueprints.todoapp.data.source.TasksRepo
 import com.example.android.architecture.blueprints.todoapp.tasks.TasksFilterType.ACTIVE_TASKS
 import com.example.android.architecture.blueprints.todoapp.tasks.TasksFilterType.ALL_TASKS
 import com.example.android.architecture.blueprints.todoapp.tasks.TasksFilterType.COMPLETED_TASKS
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
 /**
@@ -94,6 +98,18 @@ class TasksViewModel(
         it.isEmpty()
     }
 
+    private val _viewState = MutableStateFlow(TasksViewState())
+    val viewState: StateFlow<TasksViewState> = _viewState
+
+    data class TasksViewState(
+        val items: List<Task> = emptyList(),
+        val dataLoading: Boolean = true,
+        val currentFilteringLabel: Int? = null,
+        val noTasksLabel: Int? = null,
+        val noTaskIconRes: Int? = null,
+        val tasksAddViewVisible: Boolean = false
+    )
+
     init {
         // Set initial state
         setFiltering(getSavedFilterType())
@@ -145,6 +161,13 @@ class TasksViewModel(
         _noTasksLabel.value = noTasksLabelString
         _noTaskIconRes.value = noTaskIconDrawable
         _tasksAddViewVisible.value = tasksAddVisible
+
+        _viewState.value = _viewState.value.copy(
+            currentFilteringLabel = filteringLabelString,
+            noTasksLabel = noTasksLabelString,
+            noTaskIconRes = noTaskIconDrawable,
+            tasksAddViewVisible = tasksAddVisible
+        )
     }
 
     fun clearCompletedTasks() {
